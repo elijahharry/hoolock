@@ -1,70 +1,59 @@
-const injectClasses = (obj: any, classes: string[]): any => {
+import forEntries from "./forEntries";
+import apply from "./shared/apply";
+import { AnyArray, Falsey, Nilable } from "./types";
+
+export interface ClassMap {
+  [key: string]: true | Falsey;
+}
+
+export type ClassPrimitive = string | Falsey;
+
+export type ClassValue =
+  | ClassMap
+  | ClassPrimitive
+  | ClassValue[]
+  | readonly ClassValue[]
+  | (() => ClassValue);
+
+const resolveClasses = (obj: any, classes: string[]): any => {
   if (obj) {
-    let type = typeof obj;
-
-    if (type === "string") {
-      return classes.push(obj);
-    }
-
-    if (type === "object") {
-      if (Array.isArray(obj)) {
-        mapClasses(obj, classes);
-        return;
-      }
-
-      // Exract keys from the object, if they have a truthy value
-      // i.e. { "text-red": true, "text-blue": false } => "text-red"
-      for (const key in obj)
-        if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key]) {
-          classes.push(key);
+    switch (typeof obj) {
+      case "string":
+        return classes.push(obj);
+      case "object":
+        if (obj !== null) {
+          if (Array.isArray(obj)) {
+            return resolveClassesArray(obj, classes);
+          }
+          forEntries(obj, ([key, value]) => {
+            if (value && key) {
+              classes.push(key);
+            }
+          });
         }
-
-      return;
-    }
-
-    if (type === "function") {
-      injectClasses(obj(), classes);
-      return;
+        return;
+      case "function":
+        return resolveClasses(obj(), classes);
+      default:
+        return;
     }
   }
 };
 
-const mapClasses = (args: any[], classes: string[] = []) => {
-  for (const arg of args) {
-    injectClasses(arg, classes);
-  }
+const resolveClassesArray = (values: ClassValue[], classes: string[]): void =>
+  values.forEach((value) => resolveClasses(value, classes));
+
+const classes = /* @__PURE__ */ (() => {
+  const classes = (...args: ClassValue[]): string =>
+    apply(classes.list, args).join(" ");
+
+  classes.list = (...args: ClassValue[]): string[] => {
+    const classes: string[] = [];
+    resolveClassesArray(args, classes);
+    return classes;
+  };
+
   return classes;
-};
-
-/**
- * Merge separate CSS class names into a single string. Will combine nested arrays, the keys of objects with truthy values, the results of functions passed through it and ignore any other non-string/falsey values.
- *
- * @example
- * ```js
- * classes("text", true && "text-bold", 0 && "text-italic");
- * // -> "text text-bold"
- *
- * classes("text", {
- *   "text-bold": true,
- *   "text-italic": false,
- * });
- * // -> "text text-bold"
- *
- * classes("text", ["text-bold", ["text-italic"]]);
- * // -> "text text-bold text-italic"
- *
- * classes(
- *   "text",
- *   () => "text-bold",
- *   () => ({
- *     "text-italic": true,
- *   })
- * );
- * // -> "text text-bold text-italic"
- * ```
- */
-const classes = (...args: any[]) => {
-  return mapClasses(args).join(" ");
-};
+})();
 
 export default classes;

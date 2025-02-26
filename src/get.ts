@@ -2,31 +2,6 @@ import isObject from "./isObject";
 import toPath from "./shared/toPath";
 import type { Path, Defined } from "./types";
 
-/**
- * Retrieves the value at a path on an object. Nested paths are supported via dot and bracket syntax. Optionally provide a default value to return if the path is not found and/or undefined.
- * @example
- * ```js
- * import get from "hoolock/get";
- *
- * const object = {
- *   foo: {
- *     bar: {
- *       baz: 1,
- *     },
- *   },
- * };
- * get(object, "foo.bar.baz");
- * // -> 1
- *
- * // Also works with bracket syntax:
- * get(object, "foo.bar['baz']");
- * // -> 1
- *
- * // Provide a default value:
- * get(object, "foo.bar.baz.bop", "default");
- * // -> "default"
- * ```
- */
 function get<T extends object, K extends keyof T>(
   target: T,
   path: K | [K] | readonly [K]

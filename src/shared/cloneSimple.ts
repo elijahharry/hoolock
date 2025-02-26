@@ -6,16 +6,6 @@ import type { Mapped, Visited } from "../types";
 
 type Recurse = <T>(obj: T) => T;
 
-// function cloneBasic
-
-// function createCached<T extends AnyObject>(object: T, visited: Visited): T {
-//   if (visited.has(object)) return visited.get(object)!;
-//   const clone = emptyObjectFrom(object);
-//   visited.set(object, clone);
-
-//   return clone;
-// }
-
 function createCached<T extends Mapped>(
   object: T,
   recurse: Recurse = returnInitialArgument,

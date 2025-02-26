@@ -1,12 +1,11 @@
-import { bundleEntries } from "./bundle";
+import { bundle } from "./bundle";
 import { buildDistribution } from "./distribution";
 import out from "./util/out";
 
 const build = async () => {
   const start = Date.now();
-  const bundledFiles = await bundleEntries();
-
-  await buildDistribution(bundledFiles);
+  await bundle();
+  await buildDistribution();
 
   out.success(
     "Bundled in %s",
@@ -16,4 +15,4 @@ const build = async () => {
   );
 };
 
-export default build;
+build();

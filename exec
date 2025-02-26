@@ -1,29 +1,59 @@
 #!/usr/bin/env node
 
-const { bundleRequire } = require("bundle-require"),
-  { resolve } = require("path"),
-  fs = require("fs");
+const { resolve } = require("path"),
+  fs = require("fs"),
+  { build } = require("tsup"),
+  { randomUUID } = require("crypto"),
+  { spawn } = require("child_process");
+
+const cache = resolve(__dirname, ".cache"),
+  scriptsCache = resolve(cache, "exec-scripts");
+
+const cleanCache = () => {
+  try {
+    fs.rmSync(cache, { recursive: true });
+  } catch {}
+};
+
+cleanCache();
+
 (async () => {
   const scriptName = process.argv[2],
     scriptPath = resolve(
       __dirname,
       "bin",
       /\.[tj]s$/.test(scriptName) ? scriptName : `${scriptName}.ts`
-    );
+    ),
+    outputFile = randomUUID() + ".js",
+    outputPath = resolve(scriptsCache, outputFile);
 
-  let { mod } = await bundleRequire({
-    filepath: scriptPath,
+  const packageJson = JSON.parse(
+    fs.readFileSync(resolve(__dirname, "package.json"), "utf-8")
+  );
+
+  const deps = (key) => Object.keys(packageJson[key] || {});
+
+  const neverExternal = ["chalk"];
+  const external = deps("dependencies")
+    .concat(deps("devDependencies"))
+    .filter((dep) => !neverExternal.includes(dep));
+
+  await build({
+    entryPoints: {
+      [outputFile]: scriptPath,
+    },
+    outDir: scriptsCache,
     format: "cjs",
+    minify: false,
+    external,
+    silent: true,
   });
 
-  if ("default" in mod) mod = mod.default;
-
-  return mod();
-})().then(() => {
-  const args = process.argv.slice(2);
-  if (args.includes("--keep-cache") || args.includes("-kc")) return;
-  const cache = resolve(__dirname, ".cache");
-  try {
-    fs.rmSync(cache, { recursive: true });
-  } catch {}
-});
+  spawn("node", [outputPath, ...process.argv.slice(3)], {
+    stdio: "inherit",
+  }).on("exit", () => {
+    const args = process.argv.slice(2);
+    if (args.includes("--keep-cache") || args.includes("-kc")) return;
+    cleanCache();
+  });
+})();

@@ -1,27 +1,6 @@
 import compareObjects from "./shared/compareObjects";
 import completeCompare from "./shared/completeCompare";
 
-/**
- * Performs a __deep__ equality check between two objects and their enumerable properties. For shallow equality use __isMatch__.
- *
- * Can compare objects with circular references.
- * @example
- * ```js
- * import isEqual from "hoolock/isEqual";
- *
- * isEqual(
- *   { species: "Gibbon", foods: ["Leaves", "Flowers"] },
- *   { species: "Gibbon", foods: ["Leaves", "Flowers"] },
- * );
- * // -> true
- *
- * isEqual(
- *   { species: "Orangutan", foods: ["Bark", "Insects"] },
- *   { species: "Orangutan", foods: ["Bark", "Insects", "Shoots"] },
- * );
- * // -> false
- * ```
- */
 const isEqual = /* @__PURE__ */ ((): ((
   compare: any,
   against: any

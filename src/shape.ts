@@ -11,28 +11,6 @@ type ShapeValues<K extends PropertyKey, T> =
   | ShapeDynamicValues<K, T>
   | ShapeStaticValues<T>;
 
-/**
- * Used to create new arrays or objects filled with the provided static/dynamic values. The first argument will determine the type of object that will be returned:
- *
- * - __Arrays:__ Provide the desired length of the array (as a number).
- *
- * - __Objects:__ Pass through an array of keys (strings, numbers or symbols).
- *
- * Both accept the same value types:
- *
- * - __Static__<`{ value: any }`>: Provide a single value that will be used to fill the array/object via an object with a `value` property.
- * - __Dynamic__<`(key) => value`>: Provide a callback function that receives the current key/index and returns a value.
- * @example
- * ```js
- * import shape from "hoolock/shape";
- *
- * shape(3, { value: "gibbon" });
- * // -> ['gibbon', 'gibbon', 'gibbon']
- *
- * shape(["lar", "hoolock", "siamang"], (key) => key + " gibbon");
- * // -> { lar: 'lar gibbon', hoolock: 'hoolock gibbon', siamang: 'siamang gibbon' }
- * ```
- */
 function shape<T>(length: number, values: ShapeValues<number, T>): T[];
 function shape<T, K extends string | number | symbol>(
   keys: K[],

@@ -42,36 +42,6 @@ function _merge(target: Mapped, source: Mapped) {
   return source;
 }
 
-/**
- * Performs a __deep__ merge using the enumerable properties of two or more source objects. Does not modify the original target object, instead returning a new object.
- *
- * Arrays will be merged via concatenation. Any other objects, even those with custom prototypes, will have their properties merged into a plain object. Circular references will be preserved in the merged object.
- *
- * Ignores the following objects: React elements, Promises, Dates, RegExps and Functions.
- * @example
- * ```js
- * import merge from "hoolock/merge";
- *
- * merge(
- *   { name: "Gibbon" },
- *   { family: "Hylobatidae" },
- *   { diet: "Fruits" },
- *   { diet: "Insects" }
- * );
- * // -> { name: 'Gibbon', family: 'Hylobatidae', diet: 'Insects' }
- *
- * // Merging nested objects:
- *
- * merge(
- *   { name: "Gibbon" },
- *   { family: "Hylobatidae" },
- *   { diet: ["fruits", "leaves"] },
- *   { diet: ["insects", "shoots"] }
- * );
- * // -> { name: 'Gibbon', family: 'Hylobatidae', diet: ['fruits', "leaves", 'insects', "shoots"] }
- *
- * ```
- */
 function merge<T extends {}, U>(source1: T, source2: U): T & U;
 function merge<T extends {}, U, V>(
   source1: T,

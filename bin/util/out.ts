@@ -1,6 +1,5 @@
 import { inspect } from "util";
 
-// const redbold = (str: string) => `\x1b[31m\x1b[1m${str}\x1b[0m`;
 const bold = (str: string) => `\x1b[1m${str}\x1b[0m`;
 const red = (str: string) => `\x1b[31m${str}\x1b[0m`;
 const yellow = (str: string) => `\x1b[33m${str}\x1b[0m`;
@@ -22,7 +21,6 @@ const createOutput = (
   prefix: string,
   target: "log" | "error" | "warn" | "info" | "debug",
   shouldLog?: (message: string) => boolean
-  // onlynce?:
 ) => {
   const log = console[target].bind(console);
 
