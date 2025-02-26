@@ -20,6 +20,6 @@
     "noEmit": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "bin"],
+  "include": ["src", "bin", "dev.d.ts"],
   "exclude": ["node_modules"]
 }

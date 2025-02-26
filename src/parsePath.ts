@@ -1,22 +1,6 @@
 const QUOTE = /^['"]$/;
 const KEY_START = /^[.\[]$/;
 
-/**
- * Parses a stringified object path into an array of keys. Supports dot and bracket notation, including escaped quotations.
- * @example
- * ```js
- * import parsePath from "hoolock/parsePath";
- *
- * parsePath("foo.bar");
- * // -> ["foo", "bar"]
- *
- * parsePath("foo['bar'][0]");
- * // -> ["foo", "bar", "0"]
- *
- * parsePath("foo['bar\\'s'].baz");
- * // -> ["foo", "bar's", "baz"]
- * ```
- */
 function parsePath(path: string): string[] {
   const keys: string[] = [],
     len = path.length;

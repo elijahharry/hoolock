@@ -1,30 +1,6 @@
 import targetPath from "./shared/targetPath";
 import type { Path } from "./types";
 
-/**
- * Sets the value at a path of an object. Nested sets are supported via dot and bracket syntax. If a parent object within a path does not exist, it will be created (unless disabled via the fourth argument).
- *
- * To dynamically set the value via a callback function, use __update__.
- * @example
- * ```js
- * import set from "hoolock/set";
- *
- * const object = {
- *   foo: {
- *     bar: {
- *       baz: "qux",
- *     },
- *   },
- * };
- * set(object, "foo.bar.baz", "quux");
- * // -> { foo: { bar: { baz: 'quux' } } }
- *
- * // Disable automatic creation of missing parents:
- * set({}, "foo.bar", "baz", false);
- * // -> TypeError: Cannot set property 'bar' of undefined
- *
- * ```
- */
 function set<T extends object, K extends keyof T>(
   target: T,
   path: K | [K] | readonly [K],

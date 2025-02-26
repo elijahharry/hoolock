@@ -19,7 +19,7 @@ function create(source: Mapped, recurse: Recurse, cloned?: Visited): Mapped {
     return target;
   }
   if (source instanceof Date) {
-    return new Date(source.getTime());
+    return new Date(+source);
   }
   if (source instanceof RegExp) {
     const regex = new RegExp(source.source, source.flags);

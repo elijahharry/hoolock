@@ -12,6 +12,7 @@ describe("classes", () => {
         0,
         false,
         "b",
+        // @ts-expect-error
         true,
         null,
         undefined,
@@ -57,5 +58,7 @@ describe("classes", () => {
     ).toBe("a b c");
   });
 
-  //   it('merges classes wi')
+  it("lists classes", () => {
+    expect(classes.list("a", "b", "c")).toEqual(["a", "b", "c"]);
+  });
 });

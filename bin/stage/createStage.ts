@@ -2,33 +2,34 @@ import shell from "shelljs";
 import { getPackage } from "../util/getPackage";
 import fs from "fs";
 import path from "path";
-import { bundleEntries } from "../bundle";
-import { buildDistribution } from "../distribution";
 import createCacheDir from "../util/createCacheDir";
 import { TsConfigJson } from "type-fest";
-// import {PackageJson} from 'type-fest'
+import { bundle } from "../bundle";
+import { randomUUID } from "crypto";
 
-const isBuildFile = /\.(m?js|\.d.ts)$/;
+export type Stage = {
+  name: string;
+  format: "cjs" | "esm";
+  contents: string;
+};
 
 const packageDist = async (testDir: string) => {
   const dist = getPackage().dist;
 
   if (
-    !fs.existsSync(dist) ||
-    !fs.readdirSync(dist).some((file) => isBuildFile.test(file))
+    [dist.import, dist.require, dist.types].some(
+      (file) => !fs.existsSync(file.abs)
+    )
   ) {
     console.log("\nCould not find dist, building now...");
-    // If the dist package hasn't been built yet,
-    // we want to build it now
-    const bundledFiles = await bundleEntries();
-    await buildDistribution(bundledFiles);
+    await bundle();
     console.log("Done bundling, prepping tests...");
   }
 
   const res = shell.exec(
     "npm pack --pack-destination=" + JSON.stringify(testDir),
     {
-      cwd: dist,
+      cwd: dist.dir,
       silent: true,
     }
   );
@@ -42,20 +43,15 @@ const packageDist = async (testDir: string) => {
   const tgz = res.stdout.trim(),
     tgzPath = path.join(testDir, tgz);
 
-  // Need to rename it to something random,
-  // npm does some sort of cache otherwise,
-  // and the build isn't updated
-  const tarball = path.join(testDir, "hoolock-" + Date.now() + ".tgz");
+  // Need to rename it to something random, otherwise npm will cache the old tarball
+  const tarball = path.join(testDir, randomUUID() + ".tgz");
   await fs.promises.rename(tgzPath, tarball);
 
   return tarball;
 };
 
-export const setupStage = async (deps: Record<string, string> = {}) => {
-  // const main = getPackage(),
-  // testDir = path.join(main.dir, "node_modules/.cache/staging");
-
-  const testDir = createCacheDir("testing");
+export const createStage = async (deps: Record<string, string> = {}) => {
+  const testDir = createCacheDir("stage-" + randomUUID());
 
   try {
     await fs.promises.rm(testDir, {
@@ -69,16 +65,18 @@ export const setupStage = async (deps: Record<string, string> = {}) => {
 
   const tarball = await packageDist(testDir);
 
+  const { name } = getPackage();
+
   await fs.promises.writeFile(
     path.join(testDir, "package.json"),
     JSON.stringify(
       {
-        name: "hootest",
+        name: "staging",
         private: true,
         version: "1.0.0",
         devDependencies: {
           ...(deps || {}),
-          hoolock: "file:" + tarball,
+          [name]: "file:" + tarball,
         },
       },
       null,
@@ -128,10 +126,4 @@ export const setupStage = async (deps: Record<string, string> = {}) => {
   }
 
   return testDir as string;
-};
-
-export type Stage = {
-  name: string;
-  format: "cjs" | "esm";
-  contents: string;
 };

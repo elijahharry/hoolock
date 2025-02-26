@@ -42,25 +42,6 @@ function omitRecursive(
   return target;
 }
 
-/**
- * Returns a copy of the provided object with the specified paths omitted.
- * @example
- * ```js
- * import omit from "hoolock/omit";
- *
- * omit(
- *   {
- *     name: "Gibbon",
- *     family: "Hylobatidae",
- *     diet: ["fruits", "leaves", "insects"],
- *   },
- *   "family",
- *   "diet[1]"
- * );
- * // -> { name: 'Gibbon', diet: ['fruits', , "insects"] }
- *
- * ```
- */
 function omit<T extends object, K extends Array<keyof T>>(
   source: T,
   ...keys: K

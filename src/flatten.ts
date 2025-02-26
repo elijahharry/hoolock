@@ -58,22 +58,6 @@ const flattener = (
   return target;
 };
 
-/**
- * Flatten an array. Optionally pass through a max recursion depth. By default, it will completely-flatten the array
- * (no max depth).
- * @example
- * ```js
- * import flatten from "hoolock/flatten";
- *
- * // Flatten to a max depth of 1:
- * flatten([1, [2, [3, [4]], 5]], 1);
- * // -> [1, 2, [3, [4]], 5]
- *
- * // Automatically flatten fully:
- * flatten([1, [2, [3, [4]], 5]]);
- * // -> [1, 2, 3, 4, 5]
- * ```
- */
 function flatten<T extends unknown[]>(array: T): FlattenFully<T>[];
 function flatten<T extends unknown[], D extends number>(
   array: T,

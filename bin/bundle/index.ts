@@ -1,1 +1,1 @@
-export * from "./bundleEntries";
+export * from "./bundle";

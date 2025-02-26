@@ -39,25 +39,6 @@ function pickRecursive(
   return target;
 }
 
-/**
- * Returns a copy of the provided object that only contains the specified paths.
- * @example
- * ```js
- * import pick from "hoolock/pick";
- *
- * pick(
- *   {
- *     name: "Gibbon",
- *     family: "Hylobatidae",
- *     diet: ["fruits", "leaves", "insects"],
- *   },
- *   "name",
- *   "family"
- * );
- * // -> { name: 'Gibbon', family: 'Hylobatidae' }
- *
- * ```
- */
 function pick<T extends object, K extends Array<keyof T>>(
   source: T,
   ...keys: K

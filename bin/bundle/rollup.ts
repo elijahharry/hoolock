@@ -2,9 +2,11 @@ import commonjsPlugin from "@rollup/plugin-commonjs";
 import dtsPlugin from "rollup-plugin-dts";
 import { rollup, InputOptions, OutputOptions } from "rollup";
 import cleanup from "rollup-plugin-cleanup";
-import rollupNodeResolve from "@rollup/plugin-node-resolve";
+import rollupNodeResolve, {
+  RollupNodeResolveOptions,
+} from "@rollup/plugin-node-resolve";
 import rollupReplace from "@rollup/plugin-replace";
-import rollupSwc from "rollup-plugin-swc3";
+import rollupTypescript2 from "rollup-plugin-typescript2";
 import _resolve from "resolve";
 
 export const build = async (
@@ -29,11 +31,11 @@ const resolvePlugin = <T>(plugin: T) => {
 };
 
 export const commonjs = resolvePlugin(commonjsPlugin),
-  dts = resolvePlugin(dtsPlugin),
-  swc = resolvePlugin(rollupSwc);
+  dts = resolvePlugin(dtsPlugin);
 
-export const nodeResolve = () =>
+export const nodeResolve = (options?: RollupNodeResolveOptions) =>
   resolvePlugin(rollupNodeResolve)({
+    ...(options || {}),
     exportConditions: ["node"],
     extensions: [".js", ".jsx", ".ts", ".tsx", ".d.ts"],
   });
@@ -51,3 +53,5 @@ export const replace = (
     preventAssignment: true,
     values: replacements,
   });
+
+export const typescript2 = resolvePlugin(rollupTypescript2);

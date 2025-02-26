@@ -12,33 +12,6 @@ interface UpdateContext<T = any> {
 
 type Updater<T = any> = ({ key, value, target, path }: UpdateContext<T>) => any;
 
-/**
- * Sets the path of an object to the return value of an updater callback function. Nested updates are supported via dot and bracket syntax. If a parent object within a path does not exist, it will be created (unless disabled via the fourth argument).
- *
- * The updater function will be invoked with a contextual object containing the current state of the target property.
- * @example
- * ```js
- * import update from "hoolock/update";
- *
- * const object = {
- *   foo: {
- *     bar: {
- *       baz: 1,
- *     },
- *   },
- * };
- *
- * update(object, "foo.bar.qux", ({ value }) => {
- *   return value * 10;
- * });
- * // -> { foo: { bar: { baz: 1, qux: 10 } } }
- *
- * // Disable automatic creation of missing parents:
- * update({}, "foo.bar", "baz", false);
- * // -> TypeError: Cannot set property 'bar' of undefined
- *
- * ```
- */
 function update<T extends object, K extends keyof T>(
   target: T,
   path: K | [K] | readonly [K],

@@ -1,5 +1,7 @@
-const isOwnEnumerableProperty = (obj: {}, key: string | number | symbol) =>
-  Object.hasOwnProperty.call(obj, key) &&
-  Object.propertyIsEnumerable.call(obj, key);
+import isEnumerableProperty from "./isEnumerableProperty";
+import isOwnProperty from "./isOwnProperty";
+
+const isOwnEnumerableProperty = (object: {}, key: PropertyKey) =>
+  isOwnProperty(object, key) && isEnumerableProperty(object, key);
 
 export default isOwnEnumerableProperty;
